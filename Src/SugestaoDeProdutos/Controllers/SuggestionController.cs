@@ -14,7 +14,9 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SugestaoDeProdutos.Commands;
 using SugestaoDeProdutos.Models;
+using SugestaoDeProdutos.Queries;
 using System;
 using System.Threading;
 
@@ -38,12 +40,19 @@ namespace SugestaoDeProdutos.Controllers
         /// <returns>The suggestion identified by the supplied identifier.</returns>
         /// <response code="200">Returns the suggestion data simplified (Id, Date, StoreName properties only).</response>
         /// <response code="404">If the supplied identifier isn't valid.</response>
-        [HttpGet("{suggestionId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [HttpGet("{suggestionId:guid}", Name = nameof(GetSuggestionAsync))]
+        [ProducesResponseType(typeof(FoundSuggestionDto), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult GetSuggestionAsync([FromRoute] Guid suggestionId, CancellationToken cancellationToken)
         {
-            return Ok();
+            var response = new FoundSuggestionDto
+                {
+                    SuggestionId = suggestionId,
+                    Date = DateTime.Now,
+                    StoreName = "example store name"
+                };
+
+            return Ok(response);
         }
 
         /// <summary>
@@ -55,11 +64,13 @@ namespace SugestaoDeProdutos.Controllers
         /// <response code="201">Returns the newly created suggestion identifier.</response>
         /// <response code="400">If the model or any required property of the model is null/empty</response>
         [HttpPost]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(CreatedSuggestionDto), 201)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult PostSuggestionAsync([FromBody] SuggestionModel model, CancellationToken cancellationToken)
         {
-            return CreatedAtRoute(nameof(GetSuggestionAsync), new { SuggestionId = Guid.NewGuid().ToStriçõesng() });
+            var response = new CreatedSuggestionDto { SuggestionId = Guid.NewGuid() };
+
+            return CreatedAtRoute(nameof(GetSuggestionAsync), response, response);
         }
     }
 }

@@ -15,5 +15,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\SugestaoDeProdutos.Commands\SugestaoDeProdutos.Commands.csproj" />
+    <ProjectReference Include="..\SugestaoDeProdutos.Queries\SugestaoDeProdutos.Queries.csproj" />
+  </ItemGroup>
+
 
 </Project>
