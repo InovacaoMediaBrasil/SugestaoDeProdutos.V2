@@ -1,3 +1,16 @@
+// ***********************************************************************
+// Assembly         : SugestaoDeProdutos
+// Author           : Guilherme Branco Stracini
+// Created          : 07-26-2020
+//
+// Last Modified By : Guilherme Branco Stracini
+// Last Modified On : 07-26-2020
+// ***********************************************************************
+// <copyright file="Startup.cs" company="Guilherme Branco Stracini ME">
+//     Copyright (c) Guilherme Branco Stracini ME. All rights reserved.
+// </copyright>
+// <summary></summary>
+// ***********************************************************************
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -10,6 +23,9 @@ using System.Reflection;
 
 namespace SugestaoDeProdutos
 {
+    /// <summary>
+    /// Class Startup.
+    /// </summary>
     public class Startup
     {
         /// <summary>
@@ -19,7 +35,7 @@ namespace SugestaoDeProdutos
         public IConfiguration Configuration { get; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Startup"/> class.
+        /// Initializes a new instance of the <see cref="Startup" /> class.
         /// </summary>
         /// <param name="env">The env.</param>
         public Startup(IWebHostEnvironment env)
@@ -35,6 +51,10 @@ namespace SugestaoDeProdutos
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Configures the services.
+        /// </summary>
+        /// <param name="services">The services.</param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -63,17 +83,29 @@ namespace SugestaoDeProdutos
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+
+            services.AddCors(o => o.AddPolicy("All", builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            }));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// Configures the specified application.
+        /// </summary>
+        /// <param name="app">The application.</param>
+        /// <param name="env">The env.</param>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseCors();
 
             app.UseSwagger();
 
