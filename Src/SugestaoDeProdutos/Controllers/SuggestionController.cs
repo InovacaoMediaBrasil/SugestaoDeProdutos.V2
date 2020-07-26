@@ -11,8 +11,12 @@
 // </copyright>
 // <summary></summary>
 // ***********************************************************************
+
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using SugestaoDeProdutos.Models;
+using System;
+using System.Threading;
 
 namespace SugestaoDeProdutos.Controllers
 {
@@ -27,16 +31,35 @@ namespace SugestaoDeProdutos.Controllers
     public class SuggestionController : ControllerBase
     {
         /// <summary>
+        /// Gets the suggestion asynchronous.
+        /// </summary>
+        /// <param name="suggestionId">The suggestion identifier.</param>
+        /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>The suggestion identified by the supplied identifier.</returns>
+        /// <response code="200">Returns the suggestion data simplified (Id, Date, StoreName properties only).</response>
+        /// <response code="404">If the supplied identifier isn't valid.</response>
+        [HttpGet("{suggestionId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult GetSuggestionAsync([FromRoute] Guid suggestionId, CancellationToken cancellationToken)
+        {
+            return Ok();
+        }
+
+        /// <summary>
         /// Posts the suggestion asynchronous.
         /// </summary>
-        /// <returns>IActionResult.</returns>
+        /// <param name="model">The suggestion model.</param>
+        /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A newly created Suggestion.</returns>
+        /// <response code="201">Returns the newly created suggestion identifier.</response>
+        /// <response code="400">If the model or any required property of the model is null/empty</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-
-        public IActionResult PostSuggestionAsync()
+        public IActionResult PostSuggestionAsync([FromBody] SuggestionModel model, CancellationToken cancellationToken)
         {
-            return Ok();
+            return CreatedAtRoute(nameof(GetSuggestionAsync), new { SuggestionId = Guid.NewGuid().ToStriçõesng() });
         }
     }
 }
