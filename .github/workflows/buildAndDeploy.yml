@@ -94,7 +94,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Webhook
-        uses: distributhor/workflow-webhook@v1
+        uses: distributhor/workflow-webhook@v3
         env:
           webhook_url: ${{ secrets.RELEASE_WEBHOOK_URL }}
           webhook_secret: '{"x-github-release-token": "${{ secrets.RELEASE_WEBHOOK_TOKEN }}"}'
