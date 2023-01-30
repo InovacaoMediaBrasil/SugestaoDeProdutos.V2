@@ -31,7 +31,7 @@ jobs:
         run: msbuild "SugfestaoDeProdutos.sln" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderPublish /p:RestoreLockedMode=true
 
       - name: Upload Core artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: Core
           path: Publish\Core      
