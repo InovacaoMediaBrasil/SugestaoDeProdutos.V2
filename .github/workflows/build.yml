@@ -1,0 +1,30 @@
+ame: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+            
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    
+      - name: Setup Nuget
+        uses: nuget/setup-nuget@v1     
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+        
+      - name: Restore NuGet packages
+        run: nuget restore "SugestaoDeProdutos.sln"
+      
+      - name: Build Debug
+        run: msbuild "SugestaoDeProdutos.sln" /p:Configuration=Debug
