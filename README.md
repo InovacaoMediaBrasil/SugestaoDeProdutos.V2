@@ -4,7 +4,7 @@
 [![Build](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos/actions/workflows/build.yml/badge.svg)](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos/actions/workflows/build.yml)
 [![CI](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos/actions/workflows/buildAndDeploy.yml/badge.svg)](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos/actions/workflows/buildAndDeploy.yml)
 
-Desenvolvido por [Guilherme Branco Stracini](https://www.guilherme.stracini.com.br) [*guilherme(at)guilhermebranco(dot)com(dot)br*] para [Editora Inovação](https://www.editorainovacao.com.br) / [Inovação Media Brasil](https://www.inovacaomedia.com.br) - © 2013 - 2020. 
+Desenvolvido por [Guilherme Branco Stracini](https://www.guilherme.stracini.com.br) [*guilherme(at)guilhermebranco(dot)com(dot)br*] para [Editora Inovação](https://www.editorainovacao.com.br) / [Inovação Media Brasil](https://www.inovacaomedia.com.br) - © 2013 - 2023. 
 
 ---
 
