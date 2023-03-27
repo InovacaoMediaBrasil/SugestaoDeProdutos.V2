@@ -5,6 +5,10 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     name: Build
@@ -99,3 +103,14 @@ jobs:
           webhook_url: ${{ secrets.RELEASE_WEBHOOK_URL }}
           webhook_secret: '{"x-github-release-token": "${{ secrets.RELEASE_WEBHOOK_TOKEN }}"}'
           data: '{"downloadUrls": ["${{ steps.upload_release_asset_core.outputs.browser_download_url }}"]}'
+          
+          
+  cleanup:
+    name: Cleanup
+    needs: create_release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: "*"
