@@ -17,6 +17,10 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+        
+      - name: Set solution name
+        run: |
+          echo "solution=$(([io.fileinfo]$(Get-ChildItem -Path .\* -Include *.sln)).name)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Setup MSBuild Path
         uses: microsoft/setup-msbuild@v1.3
@@ -29,10 +33,10 @@ jobs:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
       - name: Restore NuGet Packages
-        run: nuget restore "SugfestaoDeProdutos.sln"
+        run: nuget restore ${{ env.solution }}
 
       - name: Build Release
-        run: msbuild "SugfestaoDeProdutos.sln" /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderPublish /p:RestoreLockedMode=true
+        run: msbuild ${{ env.solution }} /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderPublish /p:RestoreLockedMode=true
 
       - name: Upload Core artifacts
         uses: actions/upload-artifact@v3
