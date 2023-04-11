@@ -1,0 +1,52 @@
+name: Update Version
+
+on:
+  pull_request:
+    types: [ "opened" ]
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  updateVersion:
+    name: Build & Patch
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+           ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Set solution name
+        run: |
+          echo "solution=$([io.path]::GetFileNameWithoutExtension($(Get-ChildItem -Path .\* -Include *.sln))).sln" | Out-File -FilePath $env:GITHUB_ENV -Append
+                   
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v1.3
+        with:
+          msbuild-architecture: x64
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+    
+      - name: Setup Nuget
+        uses: nuget/setup-nuget@v1     
+        env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+               
+      - name: Restore NuGet packages
+        run: nuget restore ${{ env.solution }}
+      
+      - name: Build Debug
+        run: msbuild ${{ env.solution }} /p:Configuration=Debug 
+
+      - name: Setup GIT config
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+      - name: Commit and Push
+        run: |
+          git add .
+          git commit -a -m "Version update (CI)"
+          git push
