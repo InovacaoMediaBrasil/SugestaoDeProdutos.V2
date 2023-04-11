@@ -24,6 +24,10 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        
+      - name: Set solution name
+        run: |
+          echo "solution=$(([io.fileinfo]$(Get-ChildItem -Path .\* -Include *.sln)).name)" | Out-File -FilePath $env:GITHUB_ENV -Append
             
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.3
@@ -36,7 +40,7 @@ jobs:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
         
       - name: Restore NuGet packages
-        run: nuget restore "SugestaoDeProdutos.sln"
+        run: nuget restore ${{ env.solution }}
       
       - name: Build Debug
-        run: msbuild "SugestaoDeProdutos.sln" /p:Configuration=Debug
+        run: msbuild ${{ env.solution }} /p:Configuration=Debug
