@@ -109,8 +109,7 @@ jobs:
           webhook_url: ${{ secrets.RELEASE_WEBHOOK_URL }}
           webhook_secret: '{"x-github-release-token": "${{ secrets.RELEASE_WEBHOOK_TOKEN }}"}'
           data: '{ "tag_name": "${{ github.run_number }}", "assets": [{ "name" : "Core.zip", "browser_download_url": "${{ steps.upload_core.outputs.browser_download_url }}" } ] }'
-          
-          
+    
   cleanup:
     name: Cleanup
     needs: create_release
