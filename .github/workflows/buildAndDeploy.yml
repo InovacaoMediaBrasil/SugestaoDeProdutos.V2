@@ -90,8 +90,8 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload Release Asset Core
-        id: upload_release_asset_core
+      - name: Upload Core
+        id: upload_core
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -101,12 +101,14 @@ jobs:
           asset_name: Core.zip
           asset_content_type: application/zip
 
-      - name: Webhook
+      - name: Send Webhook
         uses: distributhor/workflow-webhook@v3
         env:
+          webhook_type: 'json-extended'
+          event_name: 'release'
           webhook_url: ${{ secrets.RELEASE_WEBHOOK_URL }}
           webhook_secret: '{"x-github-release-token": "${{ secrets.RELEASE_WEBHOOK_TOKEN }}"}'
-          data: '{"downloadUrls": ["${{ steps.upload_release_asset_core.outputs.browser_download_url }}"]}'
+          data: '{ "tag_name": "${{ github.run_number }}", "assets": [{ "name" : "Core.zip", "browser_download_url": "${{ steps.upload_core.outputs.browser_download_url }}" } ] }'
           
           
   cleanup:
