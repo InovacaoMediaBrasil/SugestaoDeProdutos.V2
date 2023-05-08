@@ -16,7 +16,7 @@ API to receive and register product suggestions from e-commerce
 
 ---
 
-Developer by [Guilherme Branco Stracini](https://www.guilhermebranco.com.br) for [Editora Inovação](https://www.editorainovacao.com.br) 
+Developed by [Guilherme Branco Stracini](https://www.guilhermebranco.com.br) for [Editora Inovação](https://www.editorainovacao.com.br) 
 
 © 2017 ~ 2018 All rights reserved.
 
