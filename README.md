@@ -8,6 +8,8 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/e16042dd644cfee66864/test_coverage)](https://codeclimate.com/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2/test_coverage)
 [![CodeFactor](https://www.codefactor.io/repository/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2/badge)](https://www.codefactor.io/repository/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2)
 
+![logo](logo.png)
+
 ---
 
 ## About
