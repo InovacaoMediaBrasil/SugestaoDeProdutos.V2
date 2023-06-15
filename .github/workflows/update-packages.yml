@@ -7,17 +7,25 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-jobs:
+jobs:   
+
   update_packages:
     name: Update packages
     runs-on: windows-latest
-
+    
     steps:
+      - name: Generate a token
+        id: generate_token
+        uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+    
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.generate_token.outputs.token }}
             
       - name: Set solution name
         run: |
@@ -47,7 +55,7 @@ jobs:
 
       - name: Setup GIT config
         run: |
-          git config user.name "GitHub Actions Bot"
+          git config user.name "dotNETFrameworkUpdater"
           git config user.email "<>"
           git config --global --add --bool push.autoSetupRemote true
       
@@ -63,17 +71,24 @@ jobs:
     needs: update_packages
 
     steps:
+      - name: Generate a token
+        id: generate_token
+        uses: tibdex/github-app-token@b62528385c34dbc9f38e5f4225ac829252d1ea92
+        with:
+          app_id: ${{ secrets.APP_ID }}
+          private_key: ${{ secrets.APP_PRIVATE_KEY }}
+    
       - name: Checkout code
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.generate_token.outputs.token }}
           ref: features/update_dependencies_${{ github.run_number }}
     
       - name: Create pull request
         uses: devops-infra/action-pull-request@v0.5.5
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ steps.generate_token.outputs.token }}
           source_branch: features/update_dependencies_${{ github.run_number }}
           target_branch: main
           title: Update NuGet packages
