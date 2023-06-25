@@ -3,7 +3,7 @@ on:
   pull_request
 jobs:
   linter-check:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
     
       - name: Checkout repo

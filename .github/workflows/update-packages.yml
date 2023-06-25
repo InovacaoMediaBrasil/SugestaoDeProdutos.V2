@@ -11,7 +11,7 @@ jobs:
 
   update_packages:
     name: Update packages
-    runs-on: windows-latest
+    runs-on: self-hosted
     
     steps:
       - name: Generate a token
@@ -67,7 +67,7 @@ jobs:
           
   create_pull_request:
     name: Create pull request
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: update_packages
 
     steps:
