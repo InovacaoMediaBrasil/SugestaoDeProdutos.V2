@@ -12,7 +12,7 @@ concurrency:
 jobs:
   build:
     name: Build
-    runs-on: self-hosted
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Code
@@ -47,7 +47,7 @@ jobs:
   deploy_core:
     name: Deploy Core
     needs: build
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v3
@@ -66,7 +66,7 @@ jobs:
   create_release:
     name: Create Release
     needs: [deploy_core, deploy_assets]
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Download artifact Core
         uses: actions/download-artifact@v3
@@ -113,7 +113,7 @@ jobs:
   cleanup:
     name: Cleanup
     needs: create_release
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Remove artifacts
         uses: geekyeggo/delete-artifact@v2

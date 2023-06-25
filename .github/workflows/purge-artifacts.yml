@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   delete-artifacts:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - uses: kolpav/purge-artifacts-action@v1
         with:

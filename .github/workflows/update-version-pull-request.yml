@@ -11,7 +11,7 @@ concurrency:
 jobs:
   updateVersion:
     name: Build & Patch
-    runs-on: self-hosted
+    runs-on: windows-latest
 
     steps:
       - name: Generate a token
