@@ -61,12 +61,14 @@ namespace SugestaoDeProdutos
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v2",
+                c.SwaggerDoc(
+                    "v2",
                     new OpenApiInfo
                     {
-                        Title = "Sugestão de produtos",
+                        Title = "Sugestï¿½o de produtos",
                         Version = "v2",
-                        Description = "API de sugestão de produtos da Editora Inovação / Inovação Media Brasil",
+                        Description =
+                            "API de sugestï¿½o de produtos da Editora Inovaï¿½ï¿½o / Inovaï¿½ï¿½o Media Brasil",
                         Contact = new OpenApiContact
                         {
                             Name = "Guilherme Branco Stracini",
@@ -75,21 +77,28 @@ namespace SugestaoDeProdutos
                         License = new OpenApiLicense
                         {
                             Name = "Use under MIT",
-                            Url = new Uri("https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos/blob/master/LICENSE"),
+                            Url = new Uri(
+                                "https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos/blob/master/LICENSE"
+                            ),
                         }
-                    });
+                    }
+                );
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddCors(o => o.AddPolicy("All", builder =>
-            {
-                builder.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            }));
+            services.AddCors(
+                o =>
+                    o.AddPolicy(
+                        "All",
+                        builder =>
+                        {
+                            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                        }
+                    )
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -111,7 +120,7 @@ namespace SugestaoDeProdutos
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v2/swagger.json", "Sugestão de Produtos v2");
+                c.SwaggerEndpoint("/swagger/v2/swagger.json", "Sugestï¿½o de Produtos v2");
                 c.RoutePrefix = string.Empty;
             });
 

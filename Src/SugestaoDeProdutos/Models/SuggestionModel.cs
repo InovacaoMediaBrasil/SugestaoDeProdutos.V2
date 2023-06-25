@@ -20,7 +20,6 @@ namespace SugestaoDeProdutos.Models
     /// </summary>
     public class SuggestionModel
     {
-
         /// <summary>
         /// Gets or sets the name of the store.
         /// </summary>

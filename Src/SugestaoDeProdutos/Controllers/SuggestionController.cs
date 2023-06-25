@@ -43,14 +43,17 @@ namespace SugestaoDeProdutos.Controllers
         [HttpGet("{suggestionId:guid}", Name = nameof(GetSuggestionAsync))]
         [ProducesResponseType(typeof(FoundSuggestionDto), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetSuggestionAsync([FromRoute] Guid suggestionId, CancellationToken cancellationToken)
+        public IActionResult GetSuggestionAsync(
+            [FromRoute] Guid suggestionId,
+            CancellationToken cancellationToken
+        )
         {
             var response = new FoundSuggestionDto
-                {
-                    SuggestionId = suggestionId,
-                    Date = DateTime.Now,
-                    StoreName = "example store name"
-                };
+            {
+                SuggestionId = suggestionId,
+                Date = DateTime.Now,
+                StoreName = "example store name"
+            };
 
             return Ok(response);
         }
@@ -66,7 +69,10 @@ namespace SugestaoDeProdutos.Controllers
         [HttpPost]
         [ProducesResponseType(typeof(CreatedSuggestionDto), 201)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult PostSuggestionAsync([FromBody] SuggestionModel model, CancellationToken cancellationToken)
+        public IActionResult PostSuggestionAsync(
+            [FromBody] SuggestionModel model,
+            CancellationToken cancellationToken
+        )
         {
             var response = new CreatedSuggestionDto { SuggestionId = Guid.NewGuid() };
 
