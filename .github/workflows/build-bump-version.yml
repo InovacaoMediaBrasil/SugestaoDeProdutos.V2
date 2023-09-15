@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: bump-version
   cancel-in-progress: true
 
 env:
@@ -59,6 +59,14 @@ jobs:
           token: ${{ steps.generate_token.outputs.token }}
           ref: ${{ github.event.pull_request.head.ref }}
 
+      - name: Check for changes in Src/ directory
+        uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            src:
+              - "Src/**"
+
       - name: Set solution name
         run: |
           echo "solution=$([io.path]::GetFileNameWithoutExtension($(Get-ChildItem -Path .\* -Include *.sln)))" | Out-File -FilePath $env:GITHUB_ENV -Append
@@ -66,6 +74,7 @@ jobs:
 
       - name: Update PR with comment (build started solution)
         uses: mshick/add-pr-comment@v2
+        if: steps.changes.outputs.src == 'true'
         with:
           repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
@@ -73,8 +82,19 @@ jobs:
           message: |
             **Build debug & Version bump:** :beginner: [Building ${{ env.solution }}.sln](${{ env.GHA_URL }})
 
+      - name: Update PR with comment (build started solution)
+        uses: mshick/add-pr-comment@v2
+        if: steps.changes.outputs.src == 'false'
+        with:
+          repo-token: ${{ steps.generate_token.outputs.token }}
+          refresh-message-position: true
+          message-id: 'begin'
+          message: |
+            **Build debug & Version bump:** :alien: [Not building ${{ env.solution }}.sln](${{ env.GHA_URL }}), no source files changed.
+
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v1.3
+        if: steps.changes.outputs.src == 'true'
         with:
           msbuild-architecture: x64
         env:
@@ -82,21 +102,40 @@ jobs:
 
       - name: Setup Nuget
         uses: nuget/setup-nuget@v1
+        if: steps.changes.outputs.src == 'true'
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
       - name: Restore NuGet packages
+        if: steps.changes.outputs.src == 'true'
         run: nuget restore "${{ env.solution }}.sln"
 
       - name: Build Debug
-        run: msbuild "${{ env.solution }}.sln" /p:Configuration=Debug  -verbosity:detailed
+        if: steps.changes.outputs.src == 'true'
+        run: msbuild "${{ env.solution }}.sln" /p:Configuration=Debug -verbosity:detailed -flp1:"logfile=errors.txt;errorsonly" -flp2:"logfile=warnings.txt;warningsonly"
 
       - name: Set version from file
+        if: steps.changes.outputs.src == 'true'
         run: |
           echo "version=$(type Src/${{ env.projectPath }}/Properties/Version.txt)" | Out-File -FilePath $env:GITHUB_ENV -Append
+      
+      - name: Read warnings.txt
+        uses: andstor/file-reader-action@v1
+        if: steps.changes.outputs.src == 'true'
+        id: warnings
+        with:
+         path: warnings.txt
+
+      - name: Read errors.txt        
+        uses: andstor/file-reader-action@v1
+        if: steps.changes.outputs.src == 'true'
+        id: errors
+        with:
+         path: errors.txt
 
       - name: Update PR with comment (version)
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v2        
+        if: steps.changes.outputs.src == 'true'
         with:
           repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
@@ -114,12 +153,14 @@ jobs:
             {"summary":"New version: ${{ env.version }}"}
 
       - name: Setup GIT config
+        if: steps.changes.outputs.src == 'true'
         run: |
           git config user.name "net-framework-updater[bot]"
           git config user.email "136581072+net-framework-updater[bot]@users.noreply.github.com"
           git config --global --add --bool push.autoSetupRemote true
 
       - name: Commit and Push
+        if: steps.changes.outputs.src == 'true'
         run: |
           git add .
           git commit -a -m "Version bump (CI)"
@@ -128,7 +169,7 @@ jobs:
           
       - name: Update PR with comment
         uses: mshick/add-pr-comment@v2
-        if: always()
+        if: always() && steps.changes.outputs.src == 'true'
         with:
           repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
@@ -136,18 +177,24 @@ jobs:
           message: |
             **Build debug & Version bump:** :white_check_mark: [Successfully builded and patched](${{ env.GHA_URL }}) **${{ env.solution }}.sln**.
             
-            Current version: **${{ env.version }}**
+            **Version:** :hash: ${{ env.version }}
+            **Warnings:** :warning:
+            ```
+            ${{ steps.warnings.outputs.contents }}
+            ```
           message-failure: |
             **Build debug & Version bump:** :x: [Failed](${{ env.GHA_URL }})
+
+            **Errors:** :no_entry:
+            ```
+            ${{ steps.errors.outputs.contents }}
+            ```
           message-cancelled: |
             **Build debug & Version bump:** :o: [Cancelled](${{ env.GHA_URL }})
 
-      - name: Sleep for 5 seconds
-        run: Start-Sleep -s 5
-        shell: powershell
-
       - name: Set check as successfully after new commit
-        uses: LouisBrunner/checks-action@v1.6.2
+        uses: LouisBrunner/checks-action@v1.6.2        
+        if: steps.changes.outputs.src == 'true'
         with:
           token: ${{ steps.generate_token.outputs.token }}
           conclusion: 'success'
@@ -155,9 +202,9 @@ jobs:
           output: |
             {"summary":"New version: ${{ env.version }}"}
 
-      - name: Update check run status (Success)
+      - name: Update check run status (Success)        
         uses: guibranco/github-status-action-v2@v1.1.7
-        if: success()
+        if: success() && steps.changes.outputs.src == 'true'
         with:
           authToken: ${{ steps.generate_token.outputs.token }}
           context: 'Build & Bump Version'
