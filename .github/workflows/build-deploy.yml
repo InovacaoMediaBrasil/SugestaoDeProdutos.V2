@@ -1,11 +1,11 @@
-name: CI
+name: Build & Deploy
 
 on:
   push:
     branches: [ main ]
   workflow_dispatch:
 
-concurrency: 
+concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
@@ -13,14 +13,51 @@ jobs:
   build:
     name: Build
     runs-on: windows-latest
+    outputs:
+      solution: ${{ steps.outvars.outputs.solution }}
+      version: ${{ steps.outvars.outputs.version }}
 
     steps:
-      - name: Checkout Code
+
+      - name: Checkout code
         uses: actions/checkout@v4
-        
-      - name: Set solution name
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 19.0.2+7
+
+      - name: Set environment variables
+        id: envvars
         run: |
-          echo "solution=$(([io.fileinfo]$(Get-ChildItem -Path .\* -Include *.sln)).name)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "solution=$([io.path]::GetFileNameWithoutExtension($(Get-ChildItem -Path .\* -Include *.sln)))" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "projectPath=$((Get-ChildItem -Path .\Src\ -Directory | Select-Object -First 1).Name)" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "sonar_key=$("${{ github.repository }}" -replace "/","_")" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v3
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v3
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: Setup MSBuild Path
         uses: microsoft/setup-msbuild@v1.3
@@ -28,22 +65,36 @@ jobs:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
       - name: Setup Nuget
-        uses: NuGet/setup-nuget@v1
+        uses: NuGet/setup-nuget@v1.2
         env:
           ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
+      - name: Setup VSTest
+        uses: darenm/Setup-VSTest@v1.2
+
       - name: Restore NuGet Packages
-        run: nuget restore ${{ env.solution }}
+        run: nuget restore "${{ env.solution }}.sln"
 
       - name: Build Release
-        run: msbuild ${{ env.solution }} /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderPublish /p:RestoreLockedMode=true
+        run: msbuild "${{ env.solution }}.sln" -m /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderPublish /p:RestoreLockedMode=true -verbosity:detailed
 
+      - name: Set version from file
+        id: ver
+        run: |
+          echo "version=$(type Src/${{ env.projectPath }}/Properties/Version.txt)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Set env variables to output
+        id: outvars
+        run: |    
+          echo "solution=${{ env.solution }}" >> $env:GITHUB_OUTPUT
+          echo "version=${{ env.version }}" >> $env:GITHUB_OUTPUT
+          
       - name: Upload Core artifacts
         uses: actions/upload-artifact@v3
         with:
           name: Core
           path: Publish\Core      
-    
+
   deploy_core:
     name: Deploy Core
     needs: build
@@ -61,34 +112,36 @@ jobs:
           user: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           remoteDir: Core
-          forceSsl: true 
-
+          forceSsl: true
+  
   create_release:
     name: Create Release
-    needs: [deploy_core, deploy_assets]
+    needs: [build, deploy_core]
     runs-on: ubuntu-latest
+
     steps:
+
       - name: Download artifact Core
         uses: actions/download-artifact@v3
         with:
           name: Core
           path: Core
-    
+      
       - name: Zip artifact
         run: |
           zip -r Core.zip ./Core/*
-                    
+
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ncipollo/release-action@v1.13.0
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
-          body: New release of Sugestão de Produtos
+          allowUpdates: true
           draft: false
-          prerelease: false
+          makeLatest: true
+          tag: v${{ needs.build.outputs.version }}
+          name: Release v${{ needs.build.outputs.version }}
+          generateReleaseNotes: true
+          body: Release ${{ needs.build.outputs.version }} of ${{ needs.build.outputs.solution }}
 
       - name: Upload Core
         id: upload_core
@@ -99,7 +152,7 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./Core.zip
           asset_name: Core.zip
-          asset_content_type: application/zip
+          asset_content_type: application/zip     
 
       - name: Send Webhook
         uses: distributhor/workflow-webhook@v3
@@ -108,13 +161,15 @@ jobs:
           event_name: 'release'
           webhook_url: ${{ secrets.RELEASE_WEBHOOK_URL }}
           webhook_secret: '{"x-github-release-token": "${{ secrets.RELEASE_WEBHOOK_TOKEN }}"}'
-          data: '{ "tag_name": "${{ github.run_number }}", "assets": [{ "name" : "Core.zip", "browser_download_url": "${{ steps.upload_core.outputs.browser_download_url }}" } ] }'
-    
+          data: '{ "tag_name": "v${{ needs.build.outputs.version }}", "assets": [{ "name" : "Core.zip", "browser_download_url": "${{ steps.upload_core.outputs.browser_download_url }}" } ] }'
+
   cleanup:
     name: Cleanup
     needs: create_release
     runs-on: ubuntu-latest
+
     steps:
+
       - name: Remove artifacts
         uses: geekyeggo/delete-artifact@v2
         with:
