@@ -112,29 +112,45 @@ jobs:
 
       - name: Build Debug
         if: steps.changes.outputs.src == 'true'
-        run: msbuild "${{ env.solution }}.sln" /p:Configuration=Debug -verbosity:detailed -flp1:"logfile=errors.txt;errorsonly" -flp2:"logfile=warnings.txt;warningsonly"
+        run: msbuild "${{ env.solution }}.sln" /p:Configuration=Debug -verbosity:detailed -flp1:"logfile=msbuild.errors.log;errorsonly" -flp2:"logfile=msbuild.warnings.log;warningsonly"
 
-      - name: Set version from file
+      - name: Set version from the file
         if: steps.changes.outputs.src == 'true'
         run: |
           echo "version=$(type Src/${{ env.projectPath }}/Properties/Version.txt)" | Out-File -FilePath $env:GITHUB_ENV -Append
-      
-      - name: Read warnings.txt
-        uses: andstor/file-reader-action@v1
+
+      - name: Upload artifact warnings debug
+        uses: actions/upload-artifact@v3
+        if: steps.changes.outputs.src == 'true'
+        with:
+          name: msbuild-warnings-debug
+          path: |
+                msbuild.warnings.log
+
+      - name: Upload artifact errors debug
+        uses: actions/upload-artifact@v3
+        if: failure() && steps.changes.outputs.src == 'true'
+        with:
+          name: msbuild-errors-debug
+          path: |
+                msbuild.errors.log
+
+      - name: Read msbuild.warnings.log
+        uses: guibranco/github-file-reader-action-v2@latest
         if: steps.changes.outputs.src == 'true'
         id: warnings
         with:
-         path: warnings.txt
+         path: msbuild.warnings.log
 
-      - name: Read errors.txt        
-        uses: andstor/file-reader-action@v1
-        if: steps.changes.outputs.src == 'true'
+      - name: Read msbuild.errors.log
+        uses: guibranco/github-file-reader-action-v2@latest
+        if: failure() && steps.changes.outputs.src == 'true'
         id: errors
         with:
-         path: errors.txt
+         path: msbuild.errors.log
 
       - name: Update PR with comment (version)
-        uses: mshick/add-pr-comment@v2        
+        uses: mshick/add-pr-comment@v2
         if: steps.changes.outputs.src == 'true'
         with:
           repo-token: ${{ steps.generate_token.outputs.token }}
@@ -145,6 +161,7 @@ jobs:
 
       - name: Set check as successfully before new commit
         uses: LouisBrunner/checks-action@v1.6.2
+        if: success()
         with:
           token: ${{ steps.generate_token.outputs.token }}
           conclusion: 'success'
@@ -152,7 +169,18 @@ jobs:
           output: |
             {"summary":"New version: ${{ env.version }}"}
 
-      - name: Setup GIT config
+      - name: Set check as "action required" before new commit
+        uses: LouisBrunner/checks-action@v1.6.2
+        if: failure()
+        with:
+          token: ${{ steps.generate_token.outputs.token }}
+          conclusion: 'action_required'
+          action_url: ${{ env.GHA_URL }}
+          check_id: ${{ steps.generate_check.outputs.check_id }}
+          output: |
+            {"summary": "Build failed!"}
+
+      - name: Setup GIT
         if: steps.changes.outputs.src == 'true'
         run: |
           git config user.name "net-framework-updater[bot]"
@@ -192,8 +220,8 @@ jobs:
           message-cancelled: |
             **Build debug & Version bump:** :o: [Cancelled](${{ env.GHA_URL }})
 
-      - name: Set check as successfully after new commit
-        uses: LouisBrunner/checks-action@v1.6.2        
+      - name: Set check as successfully after a new commit
+        uses: LouisBrunner/checks-action@v1.6.2
         if: steps.changes.outputs.src == 'true'
         with:
           token: ${{ steps.generate_token.outputs.token }}
@@ -202,7 +230,7 @@ jobs:
           output: |
             {"summary":"New version: ${{ env.version }}"}
 
-      - name: Update check run status (Success)        
+      - name: Update check run status (Success)
         uses: guibranco/github-status-action-v2@v1.1.7
         if: success() && steps.changes.outputs.src == 'true'
         with:
@@ -222,4 +250,4 @@ jobs:
           description: ${{ job.status }}
           state: 'failure'
           sha: ${{ github.event.pull_request.head.sha || github.sha }}
-          target_url: ${{ env.GHA_URL }}      
+          target_url: ${{ env.GHA_URL }}
