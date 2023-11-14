@@ -12,13 +12,13 @@
 // <summary></summary>
 // ***********************************************************************
 
+using System;
+using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SugestaoDeProdutos.Commands;
 using SugestaoDeProdutos.Models;
 using SugestaoDeProdutos.Queries;
-using System;
-using System.Threading;
 
 namespace SugestaoDeProdutos.Controllers
 {
