@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Core
 
@@ -122,7 +122,7 @@ jobs:
     steps:
 
       - name: Download artifact Core
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: Core
           path: Core
