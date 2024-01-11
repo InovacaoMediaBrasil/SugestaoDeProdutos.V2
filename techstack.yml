@@ -2,7 +2,7 @@ repo_name: InovacaoMediaBrasil/SugestaoDeProdutos.V2
 report_id: f5fe82c8c893ea5e0593e7036c308c89
 version: 0.1
 repo_type: Public
-timestamp: '2024-01-05T09:19:56+00:00'
+timestamp: '2024-01-11T12:24:26+00:00'
 requested_by: dependabot[bot]
 provider: github
 branch: main
@@ -31,8 +31,8 @@ tools:
   image_url: https://img.stackshare.io/service/1014/IoPy1dce_400x400.png
   detection_source_url: https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2/blob/main/Src/SugestaoDeProdutos/SugestaoDeProdutos.csproj
   detection_source: Src/SugestaoDeProdutos/SugestaoDeProdutos.csproj
-  last_updated_by: Guilherme Branco Stracini
-  last_updated_on: 2020-07-26 08:40:12.000000000 Z
+  last_updated_by: dependabot[bot]
+  last_updated_on: 2024-01-08 09:12:41.000000000 Z
 - name: ".NET Core"
   description: An Open Source, General-Purpose Development Platform Maintained by
     Microsoft and the .NET Community
@@ -119,8 +119,8 @@ tools:
   image_url: https://img.stackshare.io/service/2637/6I3oEOP4_400x400.jpg
   detection_source_url: https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2/blob/main/Src/SugestaoDeProdutos/SugestaoDeProdutos.csproj
   detection_source: Src/SugestaoDeProdutos/SugestaoDeProdutos.csproj
-  last_updated_by: Guilherme Branco Stracini
-  last_updated_on: 2020-07-26 08:40:12.000000000 Z
+  last_updated_by: dependabot[bot]
+  last_updated_on: 2024-01-08 09:12:41.000000000 Z
 - name: Visual Studio
   description: State-of-the-art tools and services that you can use to create great
     apps for devices, the cloud, and everything in between.
@@ -172,4 +172,4 @@ tools:
   detection_source_url: https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2/blob/main/Src/SugestaoDeProdutos/SugestaoDeProdutos.csproj
   detection_source: Src/SugestaoDeProdutos/SugestaoDeProdutos.csproj
   last_updated_by: dependabot[bot]
-  last_updated_on: 2023-01-24 14:19:27.000000000 Z
+  last_updated_on: 2024-01-08 09:12:41.000000000 Z
