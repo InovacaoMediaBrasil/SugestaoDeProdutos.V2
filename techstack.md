@@ -40,7 +40,7 @@ Full tech stack [here](/techstack.md)
 # Tech Stack File
 ![](https://img.stackshare.io/repo.svg "repo") [InovacaoMediaBrasil/SugestaoDeProdutos.V2](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2)![](https://img.stackshare.io/public_badge.svg "public")
 <br/><br/>
-|13<br/>Tools used|01/05/24 <br/>Report generated|
+|13<br/>Tools used|01/11/24 <br/>Report generated|
 |------|------|
 </div>
 
@@ -165,7 +165,7 @@ Full tech stack [here](/techstack.md)
 |NAME|VERSION|LAST UPDATED|LAST UPDATED BY|LICENSE|VULNERABILITIES|
 |:------|:------|:------|:------|:------|:------|
 |[MediatR.Extensions.Microsoft.DependencyInjection](https://www.nuget.org/MediatR.Extensions.Microsoft.DependencyInjection)|v11.1.0|12/08/23|dependabot[bot] |Apache-2.0|N/A|
-|[Swashbuckle.AspNetCore](https://www.nuget.org/Swashbuckle.AspNetCore)|v6.5.0|01/24/23|dependabot[bot] |BSD-3-Clause|N/A|
+|[Swashbuckle.AspNetCore](https://www.nuget.org/Swashbuckle.AspNetCore)|v6.5.0|01/08/24|dependabot[bot] |BSD-3-Clause|N/A|
 
 <br/>
 <div align='center'>
