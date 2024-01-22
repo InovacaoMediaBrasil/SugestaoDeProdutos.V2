@@ -89,15 +89,14 @@ namespace SugestaoDeProdutos
                 c.IncludeXmlComments(xmlPath);
             });
 
-            services.AddCors(
-                o =>
-                    o.AddPolicy(
-                        "All",
-                        builder =>
-                        {
-                            builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
-                        }
-                    )
+            services.AddCors(o =>
+                o.AddPolicy(
+                    "All",
+                    builder =>
+                    {
+                        builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+                    }
+                )
             );
         }
 
