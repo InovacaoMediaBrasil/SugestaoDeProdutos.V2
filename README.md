@@ -1,5 +1,7 @@
 # Sugestão de Produtos - V2
 
+The product suggestions API V2
+
 [![wakatime](https://wakatime.com/badge/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2.svg)](https://wakatime.com/badge/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2)
 [![Build & Deploy](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2/actions/workflows/build-deploy.yml/badge.svg)](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2/actions/workflows/build-deploy.yml)
 [![Update Packages](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2/actions/workflows/update-packages.yml/badge.svg)](https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos.V2/actions/workflows/update-packages.yml)
