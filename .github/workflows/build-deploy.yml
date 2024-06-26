@@ -100,19 +100,25 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
+    
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          name: Core
+          fetch-depth: 0
+            
+      # - name: Download artifact
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: Core
 
-      - name: Upload to ftp
-        uses: sebastianpopp/ftp-action@releases/v2
-        with:
-          host: ${{ secrets.FTP_SERVER }}
-          user: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          remoteDir: Core
-          forceSsl: true
+      # - name: Upload to ftp
+      #   uses: sebastianpopp/ftp-action@releases/v2
+      #   with:
+      #     host: ${{ secrets.FTP_SERVER }}
+      #     user: ${{ secrets.FTP_USERNAME }}
+      #     password: ${{ secrets.FTP_PASSWORD }}
+      #     remoteDir: Core
+      #     forceSsl: true
   
   create_release:
     name: Create Release
