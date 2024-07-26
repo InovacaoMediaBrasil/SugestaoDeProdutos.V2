@@ -127,15 +127,15 @@ jobs:
 
     steps:
 
-      - name: Download artifact Core
-        uses: actions/download-artifact@v4
-        with:
-          name: Core
-          path: Core
+      # - name: Download artifact Core
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: Core
+      #     path: Core
       
-      - name: Zip artifact
-        run: |
-          zip -r Core.zip ./Core/*
+      # - name: Zip artifact
+      #   run: |
+      #     zip -r Core.zip ./Core/*
 
       - name: Create Release
         id: create_release
