@@ -32,7 +32,6 @@ namespace SugestaoDeProdutos.Controllers
     [ApiController]
     public class SuggestionController : ControllerBase
     {
-
         /// <summary>
         /// Retrieves a suggestion by its unique identifier.
         /// </summary>
