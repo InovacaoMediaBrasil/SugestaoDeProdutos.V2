@@ -52,7 +52,7 @@ namespace SugestaoDeProdutos.Controllers
             {
                 SuggestionId = suggestionId,
                 Date = DateTime.Now,
-                StoreName = "example store name"
+                StoreName = "example store name",
             };
 
             return Ok(response);
