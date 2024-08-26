@@ -50,11 +50,17 @@ namespace SugestaoDeProdutos
             Configuration = builder.Build();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         /// <summary>
-        /// Configures the services.
+        /// Configures the services for the application, including setting up controllers, Swagger documentation, and CORS policy.
         /// </summary>
-        /// <param name="services">The services.</param>
+        /// <param name="services">The service collection to which services are added.</param>
+        /// <remarks>
+        /// This method is responsible for configuring various services required by the application.
+        /// It adds support for MVC controllers, sets up Swagger for API documentation, and configures a CORS policy
+        /// that allows any origin, method, and header. The Swagger documentation is configured with metadata
+        /// such as title, version, description, contact information, and license details.
+        /// Additionally, it includes XML comments for better documentation of the API endpoints.
+        /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
