@@ -32,14 +32,20 @@ namespace SugestaoDeProdutos.Controllers
     [ApiController]
     public class SuggestionController : ControllerBase
     {
+
         /// <summary>
-        /// Gets the suggestion asynchronous.
+        /// Retrieves a suggestion by its unique identifier.
         /// </summary>
-        /// <param name="suggestionId">The suggestion identifier.</param>
-        /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>The suggestion identified by the supplied identifier.</returns>
-        /// <response code="200">Returns the suggestion data simplified (Id, Date, StoreName properties only).</response>
-        /// <response code="404">If the supplied identifier isn't valid.</response>
+        /// <param name="suggestionId">The unique identifier of the suggestion to retrieve.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the found suggestion or a 404 Not Found response if the suggestion does not exist.</returns>
+        /// <remarks>
+        /// This method handles HTTP GET requests to retrieve a suggestion based on the provided <paramref name="suggestionId"/>.
+        /// If the suggestion is found, it returns an instance of <see cref="FoundSuggestionDto"/> with the suggestion details,
+        /// including the suggestion ID, the current date, and a placeholder store name.
+        /// If no suggestion is found for the given ID, it returns a 404 Not Found response.
+        /// The method is designed to be asynchronous and can be cancelled using the provided <paramref name="cancellationToken"/>.
+        /// </remarks>
         [HttpGet("{suggestionId:guid}", Name = nameof(GetSuggestionAsync))]
         [ProducesResponseType(typeof(FoundSuggestionDto), 200)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
