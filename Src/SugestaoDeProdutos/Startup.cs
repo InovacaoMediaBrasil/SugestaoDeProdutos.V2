@@ -72,7 +72,7 @@ namespace SugestaoDeProdutos
                         Contact = new OpenApiContact
                         {
                             Name = "Guilherme Branco Stracini",
-                            Url = new Uri("https://github.com/guibranco")
+                            Url = new Uri("https://github.com/guibranco"),
                         },
                         License = new OpenApiLicense
                         {
@@ -80,7 +80,7 @@ namespace SugestaoDeProdutos
                             Url = new Uri(
                                 "https://github.com/InovacaoMediaBrasil/SugestaoDeProdutos/blob/master/LICENSE"
                             ),
-                        }
+                        },
                     }
                 );
 
