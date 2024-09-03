@@ -29,18 +29,18 @@ namespace SugestaoDeProdutos.Controllers;
 /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
 [Produces("application/json")]
 [Route("")]
-    /// <summary>
-    /// Retrieves a suggestion based on the provided suggestion ID.
-    /// </summary>
-    /// <param name="suggestionId">The unique identifier of the suggestion to be retrieved.</param>
-    /// <param name="cancellationToken">A cancellation token to monitor for cancellation requests.</param>
-    /// <returns>An <see cref="IActionResult"/> containing the suggestion details if found, or a 404 Not Found response if the suggestion does not exist.</returns>
-    /// <remarks>
-    /// This method handles HTTP GET requests to retrieve a suggestion identified by the <paramref name="suggestionId"/>. 
-    /// If the suggestion is found, it returns a response with a <see cref="FoundSuggestionDto"/> object containing the suggestion's ID, 
-    /// the current date, and a placeholder store name. If the suggestion cannot be found, it returns a 404 Not Found status.
-    /// The method is designed to be asynchronous and can be cancelled using the provided <paramref name="cancellationToken"/>.
-    /// </remarks>
+/// <summary>
+/// Retrieves a suggestion based on the provided suggestion ID.
+/// </summary>
+/// <param name="suggestionId">The unique identifier of the suggestion to be retrieved.</param>
+/// <param name="cancellationToken">A cancellation token to monitor for cancellation requests.</param>
+/// <returns>An <see cref="IActionResult"/> containing the suggestion details if found, or a 404 Not Found response if the suggestion does not exist.</returns>
+/// <remarks>
+/// This method handles HTTP GET requests to retrieve a suggestion identified by the <paramref name="suggestionId"/>.
+/// If the suggestion is found, it returns a response with a <see cref="FoundSuggestionDto"/> object containing the suggestion's ID,
+/// the current date, and a placeholder store name. If the suggestion cannot be found, it returns a 404 Not Found status.
+/// The method is designed to be asynchronous and can be cancelled using the provided <paramref name="cancellationToken"/>.
+/// </remarks>
 [ApiController]
 public class SuggestionController : ControllerBase
 {
@@ -59,18 +59,18 @@ public class SuggestionController : ControllerBase
             StoreName = "example store name",
         };
 
-    /// <summary>
-    /// Handles the creation of a new suggestion asynchronously.
-    /// </summary>
-    /// <param name="model">The model containing the details of the suggestion to be created.</param>
-    /// <param name="cancellationToken">A cancellation token to observe while waiting for the asynchronous operation to complete.</param>
-    /// <returns>An <see cref="IActionResult"/> that represents the result of the operation, including the created suggestion's ID.</returns>
-    /// <remarks>
-    /// This method processes a POST request to create a new suggestion. It generates a unique identifier for the suggestion and returns a response indicating that the suggestion has been successfully created.
-    /// If the provided model is invalid, a 400 Bad Request response will be returned. 
-    /// The method uses the <see cref="CreatedAtRoute"/> method to return a 201 Created status along with the created suggestion's details.
-    /// </remarks>
-    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="model"/> is null.</exception>
+        /// <summary>
+        /// Handles the creation of a new suggestion asynchronously.
+        /// </summary>
+        /// <param name="model">The model containing the details of the suggestion to be created.</param>
+        /// <param name="cancellationToken">A cancellation token to observe while waiting for the asynchronous operation to complete.</param>
+        /// <returns>An <see cref="IActionResult"/> that represents the result of the operation, including the created suggestion's ID.</returns>
+        /// <remarks>
+        /// This method processes a POST request to create a new suggestion. It generates a unique identifier for the suggestion and returns a response indicating that the suggestion has been successfully created.
+        /// If the provided model is invalid, a 400 Bad Request response will be returned.
+        /// The method uses the <see cref="CreatedAtRoute"/> method to return a 201 Created status along with the created suggestion's details.
+        /// </remarks>
+        /// <exception cref="ArgumentNullException">Thrown when the <paramref name="model"/> is null.</exception>
         return Ok(response);
     }
 

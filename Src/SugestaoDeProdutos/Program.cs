@@ -14,8 +14,8 @@ public static class Program
     /// <param name="args">An array of command-line arguments passed to the application.</param>
     /// <remarks>
     /// This method initializes the application by creating a host builder, building the host, and then running it.
-    /// The host is responsible for managing the application's services and lifecycle. 
-    /// This is typically where the application starts its execution, setting up any necessary configurations 
+    /// The host is responsible for managing the application's services and lifecycle.
+    /// This is typically where the application starts its execution, setting up any necessary configurations
     /// and dependencies before entering the main execution loop.
     /// </remarks>
     public static void Main(string[] args) => CreateHostBuilder(args).Build().Run();
