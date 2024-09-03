@@ -29,22 +29,21 @@ namespace SugestaoDeProdutos.Controllers;
 /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
 [Produces("application/json")]
 [Route("")]
+    /// <summary>
+    /// Retrieves a suggestion based on the provided suggestion ID.
+    /// </summary>
+    /// <param name="suggestionId">The unique identifier of the suggestion to be retrieved.</param>
+    /// <param name="cancellationToken">A cancellation token to monitor for cancellation requests.</param>
+    /// <returns>An <see cref="IActionResult"/> containing the suggestion details if found, or a 404 Not Found response if the suggestion does not exist.</returns>
+    /// <remarks>
+    /// This method handles HTTP GET requests to retrieve a suggestion identified by the <paramref name="suggestionId"/>. 
+    /// If the suggestion is found, it returns a response with a <see cref="FoundSuggestionDto"/> object containing the suggestion's ID, 
+    /// the current date, and a placeholder store name. If the suggestion cannot be found, it returns a 404 Not Found status.
+    /// The method is designed to be asynchronous and can be cancelled using the provided <paramref name="cancellationToken"/>.
+    /// </remarks>
 [ApiController]
 public class SuggestionController : ControllerBase
 {
-    /// <summary>
-    /// Retrieves a suggestion by its unique identifier.
-    /// </summary>
-    /// <param name="suggestionId">The unique identifier of the suggestion to retrieve.</param>
-    /// <param name="cancellationToken">A cancellation token to observe while waiting for the task to complete.</param>
-    /// <returns>An <see cref="IActionResult"/> containing the found suggestion or a 404 Not Found response if the suggestion does not exist.</returns>
-    /// <remarks>
-    /// This method handles HTTP GET requests to retrieve a suggestion based on the provided <paramref name="suggestionId"/>.
-    /// If the suggestion is found, it returns an instance of <see cref="FoundSuggestionDto"/> with the suggestion details,
-    /// including the suggestion ID, the current date, and a placeholder store name.
-    /// If no suggestion is found for the given ID, it returns a 404 Not Found response.
-    /// The method is designed to be asynchronous and can be cancelled using the provided <paramref name="cancellationToken"/>.
-    /// </remarks>
     [HttpGet("{suggestionId:guid}", Name = nameof(GetSuggestionAsync))]
     [ProducesResponseType(typeof(FoundSuggestionDto), 200)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -60,17 +59,21 @@ public class SuggestionController : ControllerBase
             StoreName = "example store name",
         };
 
+    /// <summary>
+    /// Handles the creation of a new suggestion asynchronously.
+    /// </summary>
+    /// <param name="model">The model containing the details of the suggestion to be created.</param>
+    /// <param name="cancellationToken">A cancellation token to observe while waiting for the asynchronous operation to complete.</param>
+    /// <returns>An <see cref="IActionResult"/> that represents the result of the operation, including the created suggestion's ID.</returns>
+    /// <remarks>
+    /// This method processes a POST request to create a new suggestion. It generates a unique identifier for the suggestion and returns a response indicating that the suggestion has been successfully created.
+    /// If the provided model is invalid, a 400 Bad Request response will be returned. 
+    /// The method uses the <see cref="CreatedAtRoute"/> method to return a 201 Created status along with the created suggestion's details.
+    /// </remarks>
+    /// <exception cref="ArgumentNullException">Thrown when the <paramref name="model"/> is null.</exception>
         return Ok(response);
     }
 
-    /// <summary>
-    /// Posts the suggestion asynchronous.
-    /// </summary>
-    /// <param name="model">The suggestion model.</param>
-    /// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-    /// <returns>A newly created Suggestion.</returns>
-    /// <response code="201">Returns the newly created suggestion identifier.</response>
-    /// <response code="400">If the model or any required property of the model is null/empty</response>
     [HttpPost]
     [ProducesResponseType(typeof(CreatedSuggestionDto), 201)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
