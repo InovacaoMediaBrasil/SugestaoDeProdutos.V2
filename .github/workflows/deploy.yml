@@ -1,8 +1,8 @@
-name: Build & Deploy
+name: Deploy
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 concurrency:
@@ -15,20 +15,31 @@ jobs:
     runs-on: windows-latest
     outputs:
       solution: ${{ steps.outvars.outputs.solution }}
-      version: ${{ steps.outvars.outputs.version }}
+      fullSemVer: ${{ steps.gitversion.outputs.fullSemVer }}
 
     steps:
-
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Install GitVersion
+        uses: gittools/actions/gitversion/setup@v3.0.0
+        with:
+          versionSpec: "5.x"
+
+      - name: Determine Version
+        id: gitversion
+        uses: gittools/actions/gitversion/execute@v3.0.0
+        with:
+          useConfigFile: true
+          updateAssemblyInfo: true
+
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: 19.0.2+7
+          distribution: "temurin"
+          java-version: 21
 
       - name: Set environment variables
         id: envvars
@@ -78,96 +89,87 @@ jobs:
       - name: Build Release
         run: msbuild "${{ env.solution }}.sln" -m /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderPublish /p:RestoreLockedMode=true -verbosity:detailed
 
-      - name: Set version from file
-        id: ver
-        run: |
-          echo "version=$(type Src/${{ env.projectPath }}/Properties/Version.txt)" | Out-File -FilePath $env:GITHUB_ENV -Append
-
       - name: Set env variables to output
         id: outvars
-        run: |    
-          echo "solution=${{ env.solution }}" >> $env:GITHUB_OUTPUT
-          echo "version=${{ env.version }}" >> $env:GITHUB_OUTPUT
-          
+        run: echo "solution=${{ env.solution }}" >> $env:GITHUB_OUTPUT
+
       - name: Upload Core artifacts
         uses: actions/upload-artifact@v4
         with:
           name: Core
-          path: Publish\Core      
+          path: Publish\Core
 
   deploy_core:
     name: Deploy Core
     needs: build
     runs-on: ubuntu-latest
     steps:
-    
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-            
-      # - name: Download artifact
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: Core
 
-      # - name: Upload to ftp
-      #   uses: sebastianpopp/ftp-action@releases/v2
-      #   with:
-      #     host: ${{ secrets.FTP_SERVER }}
-      #     user: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     remoteDir: Core
-      #     forceSsl: true
-  
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Core
+
+      - name: Upload to ftp
+        uses: sebastianpopp/ftp-action@releases/v2
+        with:
+          host: ${{ secrets.FTP_SERVER }}
+          user: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          remoteDir: Core
+          forceSsl: true
+
   create_release:
     name: Create Release
     needs: [build, deploy_core]
     runs-on: ubuntu-latest
 
     steps:
+      - name: Download artifact Core
+        uses: actions/download-artifact@v4
+        with:
+          name: Core
+          path: Core
 
-      # - name: Download artifact Core
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: Core
-      #     path: Core
-      
-      # - name: Zip artifact
-      #   run: |
-      #     zip -r Core.zip ./Core/*
+      - name: Zip artifact
+        run: |
+          zip -r Core.zip ./Core/*
 
       - name: Create Release
-        id: create_release
         uses: ncipollo/release-action@v1.14.0
+        id: create_release
         with:
           allowUpdates: true
           draft: false
           makeLatest: true
-          tag: v${{ needs.build.outputs.version }}
-          name: Release v${{ needs.build.outputs.version }}
+          tag: v${{ env.fullSemVer }}
+          name: Release v${{ env.fullSemVer }}
           generateReleaseNotes: true
-          body: Release ${{ needs.build.outputs.version }} of ${{ needs.build.outputs.solution }}
+          body: Release ${{ env.fullSemVer }} of ${{ github.repository }}
 
-      # - name: Upload Core
-      #   id: upload_core
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: ./Core.zip
-      #     asset_name: Core.zip
-      #     asset_content_type: application/zip     
+      - name: Upload Core
+        id: upload_core
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./Core.zip
+          asset_name: Core.zip
+          asset_content_type: application/zip
 
       - name: Send Webhook
         uses: distributhor/workflow-webhook@v3
-        env:
-          webhook_type: 'json-extended'
-          event_name: 'release'
+        with:
+          webhook_type: "json-extended"
+          event_name: "release"
           webhook_url: ${{ secrets.RELEASE_WEBHOOK_URL }}
           webhook_secret: '{"x-github-release-token": "${{ secrets.RELEASE_WEBHOOK_TOKEN }}"}'
-          data: '{ "tag_name": "v${{ needs.build.outputs.version }}", "assets": [{ "name" : "Core.zip", "browser_download_url": "${{ steps.upload_core.outputs.browser_download_url }}" } ] }'
+          data: '{ "tag_name": "v${{ env.fullSemVer }}", "assets": [{ "name" : "Core.zip", "browser_download_url": "${{ steps.upload_core.outputs.browser_download_url }}" } ] }'
 
   cleanup:
     name: Cleanup
@@ -175,7 +177,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Remove artifacts
         uses: geekyeggo/delete-artifact@v5
         with:
