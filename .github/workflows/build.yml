@@ -68,27 +68,44 @@ jobs:
           message: |
             **Build:** :alien: [Not building ${{ env.solution }}.sln](${{ env.GHA_URL }}), no source files changed.
 
-      - name: Add MSBuild to PATH
-        uses: microsoft/setup-msbuild@v2
-        if: steps.changes.outputs.src == 'true'
+      - name: Set up Java
+        uses: actions/setup-java@v4
         with:
-          msbuild-architecture: x64
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+          distribution: "temurin"
+          java-version: 21
+    
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
 
-      - name: Setup Nuget
-        uses: nuget/setup-nuget@v2
-        if: steps.changes.outputs.src == 'true'
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      - name: Cache SonarCloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
 
-      - name: Restore NuGet packages
-        if: steps.changes.outputs.src == 'true'
-        run: nuget restore "${{ env.solution }}.sln"
+      - name: Install SonarCloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
+        shell: powershell
+        run: |
+          New-Item -Path .\.sonar\scanner -ItemType Directory
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner     
 
-      - name: Build
-        if: steps.changes.outputs.src == 'true'
-        run: msbuild "${{ env.solution }}.sln" /p:Configuration=Release -verbosity:detailed -flp1:"logfile=msbuild.errors.log;errorsonly" -flp2:"logfile=msbuild.warnings.log;warningsonly"
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: Build solution
+        run: dotnet build -c Release -v m -fl1 "/flp1:logFile=msbuild.errors.log;errorsonly" -fl2 "/flp2:logFile=msbuild.warnings.log;warningsonly"
+
+      - name: Run tests
+        run: dotnet test -c Release --no-build --no-restore
 
       - name: Upload artifact warnings release
         uses: actions/upload-artifact@v4
