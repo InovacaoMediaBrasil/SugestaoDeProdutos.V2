@@ -3,10 +3,10 @@ name: Build
 on:
   push:
     branches:
-      - '*'
-      - '*/*'
-      - '**'
-      - '!main'
+      - "*"
+      - "*/*"
+      - "**"
+      - "!main"
   workflow_dispatch:
 
 concurrency:
@@ -24,37 +24,18 @@ jobs:
       pull-requests: write
 
     steps:
-
-      - name: Generate a token
-        id: generate_token
-        uses: tibdex/github-app-token@v2.1.0
-        with:
-          app_id: ${{ secrets.APP_ID }}
-          private_key: ${{ secrets.APP_PRIVATE_KEY }}
-
       - name: Update PR with comment (build started)
         uses: mshick/add-pr-comment@v2
         with:
-          repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
-          message-id: 'begin'
+          message-id: "begin"
           message: |
             **Build:** :beginner: [Build started](${{ env.GHA_URL }})
 
-      - name: Generate check
-        uses: LouisBrunner/checks-action@v2.0.0
-        id: generate_check
-        if: always()
-        with:
-          token: ${{ steps.generate_token.outputs.token }}
-          name: 'Build & Bump Version'
-          status: 'in_progress'
-
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          token: ${{ steps.generate_token.outputs.token }}
-          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
 
       - name: Check for changes in Src/ directory
         uses: dorny/paths-filter@v3
@@ -73,9 +54,8 @@ jobs:
         uses: mshick/add-pr-comment@v2
         if: steps.changes.outputs.src == 'true'
         with:
-          repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
-          message-id: 'begin'
+          message-id: "begin"
           message: |
             **Build:** :beginner: [Building ${{ env.solution }}.sln](${{ env.GHA_URL }})
 
@@ -83,9 +63,8 @@ jobs:
         uses: mshick/add-pr-comment@v2
         if: steps.changes.outputs.src == 'false'
         with:
-          repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
-          message-id: 'begin'
+          message-id: "begin"
           message: |
             **Build:** :alien: [Not building ${{ env.solution }}.sln](${{ env.GHA_URL }}), no source files changed.
 
@@ -117,7 +96,7 @@ jobs:
         with:
           name: msbuild-warnings-debug
           path: |
-                msbuild.warnings.log
+            msbuild.warnings.log
 
       - name: Upload artifact errors debug
         uses: actions/upload-artifact@v4
@@ -125,63 +104,40 @@ jobs:
         with:
           name: msbuild-errors-debug
           path: |
-                msbuild.errors.log
+            msbuild.errors.log
 
       - name: Read msbuild.warnings.log
         uses: guibranco/github-file-reader-action-v2@latest
         if: steps.changes.outputs.src == 'true'
         id: warnings
         with:
-         path: msbuild.warnings.log
+          path: msbuild.warnings.log
 
       - name: Read msbuild.errors.log
         uses: guibranco/github-file-reader-action-v2@latest
         if: failure() && steps.changes.outputs.src == 'true'
         id: errors
         with:
-         path: msbuild.errors.log
+          path: msbuild.errors.log
 
       - name: Update PR with comment (version)
         uses: mshick/add-pr-comment@v2
         if: steps.changes.outputs.src == 'true'
         with:
-          repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
-          message-id: 'version'
+          message-id: "version"
           message: |
             **Build:** :dart: [Build succeeded](${{ env.GHA_URL }})
 
-      - name: Set check as successfully
-        uses: LouisBrunner/checks-action@v2.0.0
-        if: success()
-        with:
-          token: ${{ steps.generate_token.outputs.token }}
-          conclusion: 'success'
-          check_id: ${{ steps.generate_check.outputs.check_id }}
-          output: |
-            {"summary":"Build succeeded!"}
-
-      - name: Set check as "action required"
-        uses: LouisBrunner/checks-action@v2.0.0
-        if: failure()
-        with:
-          token: ${{ steps.generate_token.outputs.token }}
-          conclusion: 'action_required'
-          action_url: ${{ env.GHA_URL }}
-          check_id: ${{ steps.generate_check.outputs.check_id }}
-          output: |
-            {"summary": "Build failed!"}      
-          
       - name: Update PR with comment
         uses: mshick/add-pr-comment@v2
         if: always() && steps.changes.outputs.src == 'true'
         with:
-          repo-token: ${{ steps.generate_token.outputs.token }}
           refresh-message-position: true
-          message-id: 'final'
+          message-id: "final"
           message: |
             **Build:** :white_check_mark: [Successfully builded](${{ env.GHA_URL }}) **${{ env.solution }}.sln**.
-            
+
             **Warnings:** :warning:
             ```
             ${{ steps.warnings.outputs.contents }}
@@ -195,25 +151,3 @@ jobs:
             ```
           message-cancelled: |
             **Build:** :o: [Cancelled](${{ env.GHA_URL }})
-
-      - name: Update check run status (Success)
-        uses: guibranco/github-status-action-v2@v1.1.13
-        if: success() && steps.changes.outputs.src == 'true'
-        with:
-          authToken: ${{ steps.generate_token.outputs.token }}
-          context: 'Build & Bump Version'
-          description: 'Build ${{ env.solution}}.sln succeeded'
-          state: 'success'
-          sha: ${{ env.sha1 }}
-          target_url: ${{ env.GHA_URL }}
-
-      - name: Update check run status (Failure or Cancellation)
-        uses: guibranco/github-status-action-v2@v1.1.13
-        if: failure() || cancelled()
-        with:
-          authToken: ${{ steps.generate_token.outputs.token }}
-          context: 'Build & Bump Version'
-          description: ${{ job.status }}
-          state: 'failure'
-          sha: ${{ github.event.pull_request.head.sha || github.sha }}
-          target_url: ${{ env.GHA_URL }}
