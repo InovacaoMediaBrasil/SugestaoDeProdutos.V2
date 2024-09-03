@@ -43,15 +43,16 @@ public class Startup
     }
 
     /// <summary>
-    /// Configures the services for the application, including setting up controllers, Swagger documentation, and CORS policy.
+    /// Configures the services for the application.
     /// </summary>
     /// <param name="services">The service collection to which services are added.</param>
     /// <remarks>
-    /// This method is responsible for configuring various services required by the application.
-    /// It adds support for MVC controllers, sets up Swagger for API documentation, and configures a CORS policy
-    /// that allows any origin, method, and header. The Swagger documentation is configured with metadata
-    /// such as title, version, description, contact information, and license details.
-    /// Additionally, it includes XML comments for better documentation of the API endpoints.
+    /// This method sets up the necessary services for the application, including:
+    /// - Adding MVC controllers to the service collection.
+    /// - Configuring Swagger for API documentation, specifying the API title, version, description, contact information, and license details.
+    /// - Including XML comments for better documentation in the generated Swagger UI.
+    /// - Setting up CORS (Cross-Origin Resource Sharing) policies to allow requests from any origin, method, and header.
+    /// This configuration is essential for enabling API functionality and ensuring proper documentation and cross-origin requests.
     /// </remarks>
     public void ConfigureServices(IServiceCollection services)
     {
@@ -99,12 +100,23 @@ public class Startup
         );
     }
 
-    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
     /// <summary>
     /// Configures the specified application.
     /// </summary>
     /// <param name="app">The application.</param>
     /// <param name="env">The env.</param>
+    /// <summary>
+    /// Configures the application's request pipeline.
+    /// </summary>
+    /// <param name="app">The application builder used to configure the HTTP request pipeline.</param>
+    /// <param name="env">The web hosting environment that provides information about the environment the application is running in.</param>
+    /// <remarks>
+    /// This method sets up various middleware components in the application's request pipeline based on the hosting environment.
+    /// In development mode, it enables the developer exception page for better error visibility.
+    /// It also configures CORS (Cross-Origin Resource Sharing), Swagger for API documentation, and HTTPS redirection.
+    /// The routing middleware is added to handle incoming requests, and authorization middleware is configured to enforce security policies.
+    /// Finally, it sets up endpoint routing to map controller actions to incoming requests.
+    /// </remarks>
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
