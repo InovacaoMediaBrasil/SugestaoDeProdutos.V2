@@ -19,13 +19,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{4724033D-C56
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DomainAndInfra", "DomainAndInfra", "{8BFE6D4B-5E55-41AA-BEC9-4BD93F45C891}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B8780739-719F-4389-9C69-89B46A0817A7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SugestaoDeProdutos", "Src\SugestaoDeProdutos\SugestaoDeProdutos.csproj", "{4941CEE2-3806-4BBF-80EC-3157F8692749}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SugestaoDeProdutos.Commands", "Src\SugestaoDeProdutos.Commands\SugestaoDeProdutos.Commands.csproj", "{41A65B60-B55C-4C3E-895A-7AE3A03DB253}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SugestaoDeProdutos.Queries", "Src\SugestaoDeProdutos.Queries\SugestaoDeProdutos.Queries.csproj", "{DC42892B-362F-4043-9013-96D6577BD6E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{B8780739-719F-4389-9C69-89B46A0817A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -70,24 +70,19 @@ jobs:
           New-Item -Path .\.sonar\scanner -ItemType Directory
           dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
-      - name: Setup MSBuild Path
-        uses: microsoft/setup-msbuild@v2
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
 
-      - name: Setup Nuget
-        uses: NuGet/setup-nuget@v2
-        env:
-          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+      - name: Build solution
+        run: dotnet build -c Release
 
-      - name: Setup VSTest
-        uses: darenm/Setup-VSTest@v1.3
+      - name: Run tests
+        run: dotnet test -c Release --no-build --no-restore
 
-      - name: Restore NuGet Packages
-        run: nuget restore "${{ env.solution }}.sln"
-
-      - name: Build Release
-        run: msbuild "${{ env.solution }}.sln" -m /p:Configuration=Release /p:DeployOnBuild=true /p:PublishProfile=FolderPublish /p:RestoreLockedMode=true -verbosity:detailed
+      - name: Publish
+        run: dotnet publish -c Release -o Publish\Core --no-build --no-restore Src/${{ env.projectPath }}/${{ env.projectPath }}.csproj
 
       - name: Set env variables to output
         id: outvars
