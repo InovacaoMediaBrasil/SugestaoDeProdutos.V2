@@ -33,6 +33,7 @@ jobs:
         uses: gittools/actions/gitversion/execute@v3.0.0
         with:
           useConfigFile: true
+          updateAssemblyInfo: true
 
       - name: Set up Java
         uses: actions/setup-java@v4
