@@ -73,7 +73,7 @@ jobs:
         with:
           distribution: "temurin"
           java-version: 21
-    
+
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
@@ -94,13 +94,13 @@ jobs:
         shell: powershell
         run: |
           New-Item -Path .\.sonar\scanner -ItemType Directory
-          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner     
+          dotnet tool update dotnet-sonarscanner --tool-path .\.sonar\scanner
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
-      
+          dotnet-version: "8.0.x"
+
       - name: Build solution
         run: dotnet build -c Release -v m -fl1 "/flp1:logFile=msbuild.errors.log;errorsonly" -fl2 "/flp2:logFile=msbuild.warnings.log;warningsonly"
 
@@ -137,7 +137,7 @@ jobs:
         with:
           path: msbuild.errors.log
 
-      - name: Update PR with comment (version)
+      - name: Update PR with comment
         uses: mshick/add-pr-comment@v2
         if: steps.changes.outputs.src == 'true'
         with:
