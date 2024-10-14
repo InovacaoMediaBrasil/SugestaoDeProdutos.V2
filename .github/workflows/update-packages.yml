@@ -35,6 +35,11 @@ jobs:
         run: |
           echo "solution=$(([io.fileinfo]$(Get-ChildItem -Path .\* -Include *.sln)).name)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+      
       - name: Add MSBuild to PATH
         uses: microsoft/setup-msbuild@v2
         env:
