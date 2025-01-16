@@ -122,6 +122,8 @@ jobs:
     name: Create Release
     needs: [build, deploy_core]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Download artifact Core
