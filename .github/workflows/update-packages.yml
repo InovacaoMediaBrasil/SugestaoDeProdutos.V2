@@ -26,7 +26,7 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ steps.generate_token.outputs.token }}
@@ -94,14 +94,14 @@ jobs:
           private_key: ${{ secrets.APP_PRIVATE_KEY }}
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           token: ${{ steps.generate_token.outputs.token }}
           ref: feature/update_dependencies_${{ github.run_number }}
 
       - name: Create pull request
-        uses: devops-infra/action-pull-request@v0.6.0
+        uses: devops-infra/action-pull-request@v0.6.1
         with:
           github_token: ${{ steps.generate_token.outputs.token }}
           source_branch: feature/update_dependencies_${{ github.run_number }}
