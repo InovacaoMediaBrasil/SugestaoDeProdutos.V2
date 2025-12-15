@@ -108,7 +108,7 @@ jobs:
         run: dotnet test -c Release --no-build --no-restore
 
       - name: Upload artifact warnings release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: steps.changes.outputs.src == 'true'
         with:
           name: msbuild-warnings-release
@@ -116,7 +116,7 @@ jobs:
             msbuild.warnings.log
 
       - name: Upload artifact errors release
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         if: failure() && steps.changes.outputs.src == 'true'
         with:
           name: msbuild-errors-release
