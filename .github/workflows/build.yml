@@ -25,7 +25,7 @@ jobs:
 
     steps:
       - name: Update PR with comment (build started)
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         with:
           refresh-message-position: true
           message-id: "begin"
@@ -38,7 +38,7 @@ jobs:
           fetch-depth: 0
 
       - name: Check for changes in Src/ directory
-        uses: dorny/paths-filter@v3
+        uses: dorny/paths-filter@v4
         id: changes
         with:
           filters: |
@@ -51,7 +51,7 @@ jobs:
           echo "projectPath=$((Get-ChildItem -Path .\Src\ -Directory | Select-Object -First 1).Name)" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Update PR with comment (build started solution)
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         if: steps.changes.outputs.src == 'true'
         with:
           refresh-message-position: true
@@ -60,7 +60,7 @@ jobs:
             **Build:** :beginner: [Building ${{ env.solution }}.sln](${{ env.GHA_URL }})
 
       - name: Update PR with comment (build started solution)
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         if: steps.changes.outputs.src == 'false'
         with:
           refresh-message-position: true
@@ -138,7 +138,7 @@ jobs:
           path: msbuild.errors.log
 
       - name: Update PR with comment
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         if: steps.changes.outputs.src == 'true'
         with:
           refresh-message-position: true
@@ -147,7 +147,7 @@ jobs:
             **Build:** :dart: [Build succeeded](${{ env.GHA_URL }})
 
       - name: Update PR with comment
-        uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v3
         if: always() && steps.changes.outputs.src == 'true'
         with:
           refresh-message-position: true
