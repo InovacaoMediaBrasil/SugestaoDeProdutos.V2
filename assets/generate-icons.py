@@ -1,4 +1,5 @@
-"""Generate the project icon assets from assets/logo.png (black line glyph, transparent bg).
+"""
+Generate the project icon assets from assets/logo.png (black line glyph, transparent bg).
 
 Usage: python assets/generate-icons.py
 Requires Pillow and the Inter font (Inter-Bold.otf / Inter-Medium.otf) for the social preview.
