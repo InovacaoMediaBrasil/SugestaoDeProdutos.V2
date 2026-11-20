@@ -34,6 +34,7 @@ The project icon and related assets live in [`assets/`](assets):
 | `logo.png` | Original base logo the icons are derived from |
 
 To regenerate the icons after changing `logo.png`, run `python assets/generate-icons.py` (requires Pillow).
+The social preview text uses the [Inter](https://rsms.me/inter/) font (`Inter-Bold.otf` and `Inter-Medium.otf`), looked up in `/usr/share/fonts/opentype/inter/` by default; point `INTER_FONT_DIR` at another folder if needed. Without Inter, Pillow's built-in font is used.
 
 ---
 

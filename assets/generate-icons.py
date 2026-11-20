@@ -1,9 +1,10 @@
-"""
-Generate the project icon assets from assets/logo.png (black line glyph, transparent bg).
+"""Generate the project icon assets from assets/logo.png."""
 
-Usage: python assets/generate-icons.py
-Requires Pillow and the Inter font (Inter-Bold.otf / Inter-Medium.otf) for the social preview.
-"""
+# Usage: python assets/generate-icons.py
+# Requires Pillow. The social preview uses the Inter font (Inter-Bold.otf / Inter-Medium.otf);
+# set INTER_FONT_DIR to the folder holding them (default: /usr/share/fonts/opentype/inter).
+# Without them, Pillow's built-in font is used instead.
+import os
 import sys
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
@@ -16,6 +17,20 @@ out.mkdir(exist_ok=True)
 TOP = (14, 116, 144)      # teal-700
 BOTTOM = (8, 51, 68)      # teal-950-ish
 S = 1024                  # master size (2x of 512 for clean downsampling)
+FONT_DIR = Path(os.environ.get("INTER_FONT_DIR", "/usr/share/fonts/opentype/inter"))
+
+
+def load_font(name, size):
+    try:
+        return ImageFont.truetype(str(FONT_DIR / name), size)
+    except OSError:
+        print(f"warning: {FONT_DIR / name} not found, using Pillow's default font")
+        return ImageFont.load_default(size=size)
+
+
+# Load fonts before writing anything so a failure never leaves a mix of old and new assets.
+title = load_font("Inter-Bold.otf", 76)
+sub = load_font("Inter-Medium.otf", 34)
 
 
 def gradient(w, h):
@@ -62,8 +77,6 @@ social = gradient(W, H)
 d = ImageDraw.Draw(social)
 ic = 360
 social.alpha_composite(white_glyph(ic), (110, (H - ic) // 2))
-title = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-Bold.otf", 76)
-sub = ImageFont.truetype("/usr/share/fonts/opentype/inter/Inter-Medium.otf", 34)
 x = 540
 d.text((x, 215), "Sugestão de", font=title, fill="white")
 d.text((x, 300), "Produtos V2", font=title, fill="white")
