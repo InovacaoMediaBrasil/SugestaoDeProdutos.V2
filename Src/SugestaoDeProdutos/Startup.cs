@@ -93,9 +93,8 @@ public class Startup
         });
 
         services.AddCors(o =>
-            o.AddPolicy(
-                "All",
-                builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+            o.AddPolicy("All", builder =>
+                builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
             )
         );
     }
