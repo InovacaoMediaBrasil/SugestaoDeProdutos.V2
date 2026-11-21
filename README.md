@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/project-icon.png" alt="Sugestão de Produtos V2 icon" width="160" height="160" />
+</p>
+
 # Sugestão de Produtos - V2
 
 The product suggestions API V2
@@ -9,13 +13,28 @@ The product suggestions API V2
 [![Test Coverage](https://api.codeclimate.com/v1/badges/e16042dd644cfee66864/test_coverage)](https://codeclimate.com/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2/test_coverage)
 [![CodeFactor](https://www.codefactor.io/repository/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2/badge)](https://www.codefactor.io/repository/github/InovacaoMediaBrasil/SugestaoDeProdutos.V2)
 
-![logo](logo.png)
-
 ---
 
 ## About
 
 API to receive and register product suggestions from e-commerce
+
+---
+
+## Branding
+
+The project icon and related assets live in [`assets/`](assets):
+
+| File | Purpose |
+| ---- | ------- |
+| `project-icon.png` | Main project icon (512×512) |
+| `project-icon-{256,128,64,32}.png` | Smaller icon sizes |
+| `favicon.ico` | Multi-size favicon (16–64 px) |
+| `social-preview.png` | GitHub social preview (1280×640) |
+| `logo.png` | Original base logo the icons are derived from |
+
+To regenerate the icons after changing `logo.png`, run `python assets/generate-icons.py` (requires Pillow).
+The social preview text uses the [Inter](https://rsms.me/inter/) font (`Inter-Bold.otf` and `Inter-Medium.otf`), looked up in `/usr/share/fonts/opentype/inter/` by default; point `INTER_FONT_DIR` at another folder if needed. Without Inter, Pillow's built-in font is used.
 
 ---
 
