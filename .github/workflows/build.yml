@@ -124,14 +124,14 @@ jobs:
             msbuild.errors.log
 
       - name: Read msbuild.warnings.log
-        uses: guibranco/github-file-reader-action-v2@0bde70edb8e1a58f31372048472b5d914b7f81e1 # latest
+        uses: guibranco/github-file-reader-action-v2@8ac686317423e7fa58425009085581e0b896f449 # latest
         if: steps.changes.outputs.src == 'true'
         id: warnings
         with:
           path: msbuild.warnings.log
 
       - name: Read msbuild.errors.log
-        uses: guibranco/github-file-reader-action-v2@0bde70edb8e1a58f31372048472b5d914b7f81e1 # latest
+        uses: guibranco/github-file-reader-action-v2@8ac686317423e7fa58425009085581e0b896f449 # latest
         if: failure() && steps.changes.outputs.src == 'true'
         id: errors
         with:
